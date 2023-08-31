@@ -63,31 +63,39 @@ class _RegisterViewState extends State<RegisterView> {
                   final userCredentials = await FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
                           email: email, password: password);
-                  devtools.log('userCredentials: $userCredentials');
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                  // devtools.log('userCredentials: $userCredentials');
+                  Navigator.of(context).pushNamed(
+                    verifyEmailRoute,
+                  );
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'weak-password') {
-                    showErrorDialog(
+                    await showErrorDialog(
                       context,
                       'Please give a strong password.',
                     );
                   } else if (e.code == 'email-already-in-use') {
-                    showErrorDialog(
+                    await showErrorDialog(
                       context,
                       'Email is already registered.',
                     );
                   } else if (e.code == 'invalid-email') {
-                    showErrorDialog(
+                    await showErrorDialog(
                       context,
                       'Entered email is not valid. Please enter a valid email',
                     );
                   } else {
-                    showErrorDialog(
+                    await showErrorDialog(
                       context,
                       'something else went wrong: ${e.code}',
                     );
                   }
                 } catch (e) {
-                  showErrorDialog(context, e.runtimeType.toString());
+                  await showErrorDialog(
+                    context,
+                    e.runtimeType.toString(),
+                  );
                 }
               },
               child: const Text('Register Now'),
