@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -31,20 +32,20 @@ class _LoginView extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Column(
         children: [
           TextField(
             controller: _email,
-            decoration: InputDecoration(hintText: 'Email'),
+            decoration: const InputDecoration(hintText: 'Email'),
             enableSuggestions: false,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
           ),
           TextField(
             controller: _password,
-            decoration: InputDecoration(hintText: 'Password'),
+            decoration: const InputDecoration(hintText: 'Password'),
             obscureText: true,
             enableSuggestions: false,
             autocorrect: false,
@@ -65,12 +66,26 @@ class _LoginView extends State<LoginView> {
                       .pushNamedAndRemoveUntil(notesRoute, (route) => false);
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
-                    devtools.log("User not found for email $email");
+                    await showErrorDialog(
+                      context,
+                      "User not found for email $email",
+                    );
                   } else if (e.code == 'wrong-password') {
-                    devtools.log("You have entered wrong password.");
+                    await showErrorDialog(
+                      context,
+                      "You have entered wrong password.",
+                    );
                   } else {
-                    devtools.log("something else: ${e.code}");
+                    await showErrorDialog(
+                      context,
+                      "something else: ${e.code}",
+                    );
                   }
+                } catch (e) {
+                  await showErrorDialog(
+                    context,
+                    'Some Error Occurred of type: ${e.runtimeType}',
+                  );
                 }
               },
               child: const Text('Login'),

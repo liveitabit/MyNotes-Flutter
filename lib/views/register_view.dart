@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -41,14 +42,14 @@ class _RegisterViewState extends State<RegisterView> {
         children: [
           TextField(
             controller: _email,
-            decoration: InputDecoration(hintText: 'Email'),
+            decoration: const InputDecoration(hintText: 'Email'),
             enableSuggestions: false,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
           ),
           TextField(
             controller: _password,
-            decoration: InputDecoration(hintText: 'Password'),
+            decoration: const InputDecoration(hintText: 'Password'),
             obscureText: true,
             enableSuggestions: false,
             autocorrect: false,
@@ -65,17 +66,28 @@ class _RegisterViewState extends State<RegisterView> {
                   devtools.log('userCredentials: $userCredentials');
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'weak-password') {
-                    devtools.log('Please give a strong password.');
+                    showErrorDialog(
+                      context,
+                      'Please give a strong password.',
+                    );
                   } else if (e.code == 'email-already-in-use') {
-                    devtools.log('Email is already registered.');
+                    showErrorDialog(
+                      context,
+                      'Email is already registered.',
+                    );
                   } else if (e.code == 'invalid-email') {
-                    devtools.log(
-                        'Entered email is not valid. Please enter a valid email');
+                    showErrorDialog(
+                      context,
+                      'Entered email is not valid. Please enter a valid email',
+                    );
                   } else {
-                    devtools.log('something else went wrong: ${e.code}');
+                    showErrorDialog(
+                      context,
+                      'something else went wrong: ${e.code}',
+                    );
                   }
                 } catch (e) {
-                  devtools.log(e.runtimeType.toString());
+                  showErrorDialog(context, e.runtimeType.toString());
                 }
               },
               child: const Text('Register Now'),
