@@ -4,6 +4,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/views/notes/new_note_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -32,8 +33,16 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main UI'),
+        title: const Text('Your Notes'),
+        centerTitle: true,
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(newNoteroute);
+            },
+            icon: const Icon(Icons.add),
+            tooltip: 'Add a new Note',
+          ),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               // devtools.log(value.toString());
